@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why not you?</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f5f3; --bg3: #eeecea;
+    --text: #1a1a18; --text2: #6b6b67; --text3: #9b9b97;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --radius: 8px; --radius-lg: 12px;
+    --blue50: #E6F1FB; --blue200: #85B7EB; --blue600: #185FA5; --blue800: #0C447C;
+    --green50: #EAF3DE; --green400: #639922; --green600: #3B6D11;
+    --teal50: #E1F5EE; --teal600: #0F6E56;
+    --amber50: #FAEEDA; --amber600: #854F0B;
+    --red50: #FCEBEB; --red600: #A32D2D;
+    --purple50: #EEEDFE; --purple600: #534AB7; --purple800: #3C3489;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; }
+
+  /* NAV */
+  .nav { background: var(--bg); border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 100; }
+  .nav-inner { max-width: 780px; margin: 0 auto; padding: 0 1rem; display: flex; align-items: center; gap: 0; overflow-x: auto; }
+  .nav-item { padding: 14px 16px; font-size: 13px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s; }
+  .nav-item:hover { color: var(--text); }
+  .nav-item.active { color: #0C447C; border-bottom-color: #378ADD; font-weight: 500; }
+  .nav-logo { padding: 14px 16px 14px 0; font-size: 14px; font-weight: 500; color: var(--text); border-right: 0.5px solid var(--border); margin-right: 4px; white-space: nowrap; }
+
+  /* LAYOUT */
+  .page { display: none; max-width: 780px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .page.active { display: block; }
+  .page-title { font-size: 22px; font-weight: 500; color: var(--text); margin-bottom: 0.25rem; }
+  .page-sub { font-size: 14px; color: var(--text2); margin-bottom: 1.5rem; }
+
+  /* CARDS */
+  .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem 1.25rem; margin-bottom: 12px; }
+  .card-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+
+  /* BADGES */
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; margin-bottom: 8px; }
+  .badge-blue { background: var(--blue50); color: var(--blue800); }
+  .badge-green { background: var(--green50); color: var(--green600); }
+  .badge-teal { background: var(--teal50); color: var(--teal600); }
+  .badge-amber { background: var(--amber50); color: var(--amber600); }
+  .badge-red { background: var(--red50); color: var(--red600); }
+  .badge-purple { background: var(--purple50); color: var(--purple800); }
+  .badge-gray { background: var(--bg2); color: var(--text2); }
+
+  /* METRICS */
+  .metric-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-bottom: 12px; }
+  .metric-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-bottom: 12px; }
+  .metric { background: var(--bg2); border-radius: var(--radius); padding: 10px 12px; }
+  .metric-label { font-size: 11px; color: var(--text2); margin-bottom: 3px; }
+  .metric-val { font-size: 20px; font-weight: 500; color: var(--text); }
+  .metric-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+  /* TEXT */
+  .body-text { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 8px; }
+  .tip-box { background: var(--bg2); border-radius: var(--radius); padding: 9px 12px; margin-top: 8px; font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .tip-label { font-weight: 500; color: var(--text); }
+  .divider { border: none; border-top: 0.5px solid var(--border); margin: 10px 0; }
+  .section-label { font-size: 11px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; margin: 14px 0 6px; }
+
+  /* STEPS */
+  .step-row { display: flex; gap: 10px; margin-bottom: 7px; align-items: flex-start; }
+  .step-dot { width: 22px; height: 22px; border-radius: 50%; background: var(--bg2); color: var(--text2); font-size: 11px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .step-text { font-size: 13px; color: var(--text); line-height: 1.55; }
+
+  /* EXERCISE */
+  .ex-row { display: flex; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border); align-items: flex-start; }
+  .ex-row:last-child { border-bottom: none; }
+  .ex-num { width: 28px; height: 28px; border-radius: 50%; background: var(--blue50); color: var(--blue800); font-size: 12px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ex-num-green { background: var(--green50); color: var(--green600); }
+  .ex-num-teal { background: var(--teal50); color: var(--teal600); }
+  .ex-name { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .ex-detail { font-size: 12px; color: var(--text2); line-height: 1.4; }
+  .series-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin: 8px 0; }
+  .sc { background: var(--bg2); border-radius: var(--radius); padding: 7px; text-align: center; }
+  .sc-val { font-size: 15px; font-weight: 500; color: var(--text); }
+  .sc-lbl { font-size: 11px; color: var(--text2); }
+
+  /* MEALS */
+  .meal-block { border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 8px; }
+  .meal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .meal-time-label { font-size: 12px; font-weight: 500; color: var(--text2); }
+  .meal-kcal { font-size: 12px; color: var(--green600); background: var(--green50); padding: 2px 8px; border-radius: 10px; }
+  .meal-name { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .meal-detail { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .macro-row { display: flex; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
+  .mp { font-size: 11px; padding: 1px 7px; border-radius: 10px; }
+  .mp-p { background: var(--blue50); color: var(--blue800); }
+  .mp-c { background: var(--green50); color: var(--green600); }
+  .mp-g { background: var(--teal50); color: var(--teal600); }
+
+  /* WEEK GRID */
+  .week-grid { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 5px; margin: 10px 0; }
+  .day-cell { border-radius: var(--radius); padding: 8px 4px; text-align: center; border: 0.5px solid var(--border); }
+  .day-name { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+  .day-type { font-size: 10px; font-weight: 500; line-height: 1.3; }
+  .d-gym { background: var(--blue50); } .d-gym .day-type { color: var(--blue800); }
+  .d-cardio { background: var(--green50); } .d-cardio .day-type { color: var(--green600); }
+  .d-swim { background: var(--teal50); } .d-swim .day-type { color: var(--teal600); }
+  .d-rest { background: var(--bg2); } .d-rest .day-type { color: var(--text2); }
+  .d-flex { background: var(--amber50); } .d-flex .day-type { color: var(--amber600); }
+
+  /* TIMELINE */
+  .timeline { display: flex; border-radius: var(--radius); overflow: hidden; margin: 10px 0; }
+  .tl-seg { flex: 1; padding: 10px 8px; text-align: center; }
+  .tl-label { font-size: 11px; font-weight: 500; margin-bottom: 3px; }
+  .tl-sub { font-size: 10px; line-height: 1.3; }
+
+  /* CHECKLIST */
+  .check-row { display: flex; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border); align-items: flex-start; }
+  .check-row:last-child { border-bottom: none; }
+  .check-box { width: 18px; height: 18px; border-radius: 4px; border: 0.5px solid var(--border2); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; transition: background 0.15s; }
+  .check-box.checked { background: var(--green50); border-color: var(--green400); color: var(--green600); }
+  .check-label { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .check-detail { font-size: 12px; color: var(--text2); }
+
+  /* COMPRA */
+  .compra-section { margin-bottom: 14px; }
+  .compra-title { font-size: 13px; font-weight: 500; color: var(--text); padding-bottom: 4px; border-bottom: 0.5px solid var(--border); margin-bottom: 4px; }
+  .compra-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
+  .compra-item:last-child { border-bottom: none; }
+  .ci-qty { color: var(--text2); font-size: 12px; }
+
+  /* PHASE */
+  .phase-block { border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; border: 0.5px solid var(--border); }
+
+  /* ALARM */
+  .alarm-row { display: flex; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--border); }
+  .alarm-row:last-child { border-bottom: none; }
+  .alarm-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .alarm-text { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .alarm-detail { font-size: 12px; color: var(--text2); }
+
+  /* CARDIO OPTIONS */
+  .cardio-option { border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 8px; }
+  .cardio-opt-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .cardio-opt-detail { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .vs-divider { text-align: center; font-size: 12px; color: var(--text2); margin: 6px 0; }
+
+  /* RESULT */
+  .result-card { background: var(--bg2); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .result-label { font-size: 13px; color: var(--text2); margin-bottom: 4px; }
+  .result-value { font-size: 20px; font-weight: 500; color: var(--text); }
+
+  /* PRINT */
+  @media print {
+    .nav { display: none; }
+    .page { display: block !important; page-break-before: always; }
+    .page:first-of-type { page-break-before: avoid; }
+  }
+  @media (max-width: 600px) {
+    .metric-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .week-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-logo">Why not you?</div>
+    <div class="nav-item active" onclick="showPage('diagnostico', this)">Mediciones y objetivos</div>
+    <div class="nav-item" onclick="showPage('ejercicios', this)">Ejercicios</div>
+    <div class="nav-item" onclick="showPage('cardio', this)">Cardio</div>
+    <div class="nav-item" onclick="showPage('nutricion', this)">Nutrición</div>
+    <div class="nav-item" onclick="showPage('postura', this)">Postura</div>
+    <div class="nav-item" onclick="showPage('semanas', this)">12 Semanas</div>
+    <div class="nav-item" onclick="showPage('compras', this)">Súper</div>
+    <div class="nav-item" onclick="showPage('checklist', this)">Checklist</div>
+  </div>
+</nav>
+
+<!-- ===== MEDICIONES Y OBJETIVOS ===== -->
+<div id="diagnostico" class="page active">
+  <p class="page-title">Mediciones y objetivos</p>
+  <p class="page-sub">Punto de partida · Índices corporales · Metas a 12 semanas</p>
+
+  <div class="card">
+    <p class="card-title">Tus índices corporales</p>
+    <div class="metric-grid">
+      <div class="metric"><p class="metric-label">IMC</p><p class="metric-val">26.2</p><p class="metric-sub" style="color:var(--amber600);">Sobrepeso leve</p></div>
+      <div class="metric"><p class="metric-label">Peso ideal</p><p class="metric-val">63–72 kg</p></div>
+      <div class="metric"><p class="metric-label">A perder</p><p class="metric-val" style="color:var(--green600);">~5–9 kg</p></div>
+    </div>
+    <div class="metric-grid">
+      <div class="metric"><p class="metric-label">RCC actual</p><p class="metric-val">0.92</p><p class="metric-sub" style="color:var(--amber600);">Riesgo moderado</p></div>
+      <div class="metric"><p class="metric-label">RCC objetivo</p><p class="metric-val">≤ 0.88</p></div>
+      <div class="metric"><p class="metric-label">Cintura objetivo</p><p class="metric-val">81–83 cm</p></div>
+    </div>
+    <div class="metric-2">
+      <div class="metric"><p class="metric-label">Calorías basales</p><p class="metric-val">1,789 kcal</p></div>
+      <div class="metric"><p class="metric-label">Meta calórica diaria</p><p class="metric-val" style="color:var(--green600);">2,100 kcal</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Punto de partida vs meta</p>
+    <div class="metric-grid">
+      <div class="metric"><p class="metric-label">Peso hoy</p><p class="metric-val">76.8 kg</p></div>
+      <div class="metric"><p class="metric-label">Peso sem 12</p><p class="metric-val">70–71 kg</p></div>
+      <div class="metric"><p class="metric-label">Ritmo</p><p class="metric-val">~0.5 kg/sem</p></div>
+    </div>
+    <div class="metric-grid">
+      <div class="metric"><p class="metric-label">Cintura hoy</p><p class="metric-val">88 cm</p></div>
+      <div class="metric"><p class="metric-label">Cintura sem 12</p><p class="metric-val">81–83 cm</p></div>
+      <div class="metric"><p class="metric-label">Pecho sem 12</p><p class="metric-val">99–101 cm</p></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-seg" style="background:var(--blue50);"><p class="tl-label" style="color:var(--blue800);">Sem 1–4</p><p class="tl-sub" style="color:var(--blue600);">Adaptación. Postura mejora. –1.5 kg.</p></div>
+      <div class="tl-seg" style="background:var(--green50);"><p class="tl-label" style="color:var(--green600);">Sem 5–8</p><p class="tl-sub" style="color:var(--green600);">Pecho más plano. –3 a –4 kg.</p></div>
+      <div class="tl-seg" style="background:var(--teal50);"><p class="tl-label" style="color:var(--teal600);">Sem 9–12</p><p class="tl-sub" style="color:var(--teal600);">Resultado consolidado. –5 a –7 kg.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EJERCICIOS ===== -->
+<div id="ejercicios" class="page">
+  <p class="page-title">Plan de ejercicios</p>
+  <p class="page-sub">Gym 3 días · Técnica detallada · Progresión por fases</p>
+
+  <div class="card">
+    <p class="card-title">Rutina semanal</p>
+    <div class="week-grid">
+      <div class="day-cell d-gym"><p class="day-name">Lun</p><p class="day-type">Gym A — Pecho + espalda</p></div>
+      <div class="day-cell d-cardio"><p class="day-name">Mar</p><p class="day-type">Cardio flexible</p></div>
+      <div class="day-cell d-gym"><p class="day-name">Mié</p><p class="day-type">Gym B — Piernas + hombros</p></div>
+      <div class="day-cell d-rest"><p class="day-name">Jue</p><p class="day-type">Descanso activo</p></div>
+      <div class="day-cell d-gym"><p class="day-name">Vie</p><p class="day-type">Gym C — Fuerza total</p></div>
+      <div class="day-cell d-cardio"><p class="day-name">Sáb</p><p class="day-type">Cardio flexible</p></div>
+      <div class="day-cell d-rest"><p class="day-name">Dom</p><p class="day-type">Descanso + prep</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="badge badge-blue">Lunes — Gym A · Pecho + espalda + postura</span>
+    <div class="ex-row">
+      <div class="ex-num">1</div>
+      <div><p class="ex-name">Press inclinado con mancuernas</p>
+      <div class="series-grid"><div class="sc"><p class="sc-val">4</p><p class="sc-lbl">Series</p></div><div class="sc"><p class="sc-val">10-12</p><p class="sc-lbl">Reps</p></div><div class="sc"><p class="sc-val">60 seg</p><p class="sc-lbl">Descanso</p></div></div>
+      <p class="ex-detail">Banco 30-45° · Retrae omóplatos · Baja 2-3 seg · Aprieta el pectoral al subir. Clave para pseudoginecomastia.</p></div>
+    </div>
+    <div class="ex-row">
+      <div class="ex-num">2</div>
+      <div><p class="ex-name">Aperturas en polea alta</p>
+      <div class="series-grid"><div class="sc"><p class="sc-val">3</p><p class="sc-lbl">Series</p></div><div class="sc"><p class="sc-val">12</p><p class="sc-lbl">Reps</p></div><div class="sc"><p class="sc-val">60 seg</p><p class="sc-lbl">Descanso</p></div></div>
+      <p class="ex-detail">Define el contorno inferior del pecho. Peso ligero, movimiento controlado.</p></div>
+    </div>
+    <div class="ex-row">
+      <div class="ex-num">3</div>
+      <div><p class="ex-name">Remo en máquina o polea baja</p>
+      <div class="series-grid"><div class="sc"><p class="sc-val">4</p><p class="sc-lbl">Series</p></div><div class="sc"><p class="sc-val">10</p><p class="sc-lbl">Reps</p></div><div class="sc"><p class="sc-val">60 seg</p><p class="sc-lbl">Descanso</p></div></div>
+      <p class="ex-detail">Retrae omóplatos — corrige hombros caídos. Prioridad postural.</p></div>
+    </div>
+    <div class="ex-row">
+      <div class="ex-num">4</div>
+      <div><p class="ex-name">Jalón al pecho agarre ancho</p>
+      <div class="series-grid"><div class="sc"><p class="sc-val">3</p><p class="sc-lbl">Series</p></div><div class="sc"><p class="sc-val">12</p><p class="sc-lbl">Reps</p></div><div class="sc"><p class="sc-val">60 seg</p><p class="sc-lbl">Descanso</p></div></div>
+      <p class="ex-detail">Dorsal + corrección postural. Lleva el codo hacia la cadera.</p></div>
+    </div>
+    <div class="ex-row">
+      <div class="ex-num">5</div>
+      <div><p class="ex-name">Face pull en polea</p>
+      <div class="series-grid"><div class="sc"><p class="sc-val">3</p><p class="sc-lbl">Series</p></div><div class="sc"><p class="sc-val">15</p><p class="sc-lbl">Reps</p></div><div class="sc"><p class="sc-val">45 seg</p><p class="sc-lbl">Descanso</p></div></div>
+      <p class="ex-detail">Rotadores externos del hombro. Esencial para corregir hombros caídos.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="badge badge-blue">Miércoles — Gym B · Piernas + hombros + core</span>
+    <div class="ex-row"><div class="ex-num">1</div><div><p class="ex-name">Sentadilla con barra o mancuernas</p><p class="ex-detail">4×12 · 75 seg descanso · Mayor quema calórica total. Rodillas alineadas con pies.</p></div></div>
+    <div class="ex-row"><div class="ex-num">2</div><div><p class="ex-name">Prensa de piernas</p><p class="ex-detail">3×12 · Complementa la sentadilla. Pies al ancho de hombros en la plataforma.</p></div></div>
+    <div class="ex-row"><div class="ex-num">3</div><div><p class="ex-name">Press de hombro con mancuernas (sentado)</p><p class="ex-detail">3×10 · Hombros más anchos = pecho se ve más plano visualmente.</p></div></div>
+    <div class="ex-row"><div class="ex-num">4</div><div><p class="ex-name">Elevaciones laterales</p><p class="ex-detail">3×15 · Deltoide lateral — amplitud de hombros. Peso ligero, codos ligeramente flexionados.</p></div></div>
+    <div class="ex-row"><div class="ex-num">5</div><div><p class="ex-name">Plancha + plancha lateral</p><p class="ex-detail">3×40 seg · Core y oblicuos — corrige encorvamiento. Cuerpo completamente recto.</p></div></div>
+  </div>
+
+  <div class="card">
+    <span class="badge badge-blue">Viernes — Gym C · Fuerza total + énfasis postural</span>
+    <div class="ex-row"><div class="ex-num">1</div><div><p class="ex-name">Peso muerto rumano</p><p class="ex-detail">4×10 · Cadena posterior — clave para corregir encorvamiento. Espalda neutra siempre.</p></div></div>
+    <div class="ex-row"><div class="ex-num">2</div><div><p class="ex-name">Press banca inclinado con barra</p><p class="ex-detail">4×10 · Progresión del press del lunes. Sube peso cuando completes todas las reps.</p></div></div>
+    <div class="ex-row"><div class="ex-num">3</div><div><p class="ex-name">Dominadas asistidas o jalón supino</p><p class="ex-detail">3×10 · Dorsal + bíceps + postura. Agarre supino activa más el bíceps.</p></div></div>
+    <div class="ex-row"><div class="ex-num">4</div><div><p class="ex-name">Extensiones de espalda (hyperextension)</p><p class="ex-detail">3×15 · Erector espinal — corrige cifosis y encorvamiento. Movimiento controlado.</p></div></div>
+    <div class="ex-row"><div class="ex-num">5</div><div><p class="ex-name">Face pull + rotación externa</p><p class="ex-detail">3×15 · Segunda sesión semanal de postura. No omitir.</p></div></div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Progresión de pesos por fase</p>
+    <div class="ex-row"><div class="ex-num" style="background:var(--blue50); color:var(--blue800); font-size:10px;">1–4</div><div><p class="ex-name">Semanas 1–4: técnica</p><p class="ex-detail">Press inclinado 10–14 kg · Descanso 75 seg · Aprende a sentir el pectoral</p></div></div>
+    <div class="ex-row"><div class="ex-num" style="background:var(--green50); color:var(--green600); font-size:10px;">5–8</div><div><p class="ex-name">Semanas 5–8: progresión</p><p class="ex-detail">Press inclinado 14–18 kg · Descanso 60 seg · +2.5 kg si completas todas las reps</p></div></div>
+    <div class="ex-row"><div class="ex-num" style="background:var(--teal50); color:var(--teal600); font-size:10px;">9–12</div><div><p class="ex-name">Semanas 9–12: intensidad</p><p class="ex-detail">Press inclinado 18–22 kg · Descanso 45 seg · 4×8-10 con técnica impecable</p></div></div>
+  </div>
+</div>
+
+<!-- ===== CARDIO ===== -->
+<div id="cardio" class="page">
+  <p class="page-title">Cardio flexible</p>
+  <p class="page-sub">Martes y sábado · Elige según tu semana</p>
+
+  <div class="card">
+    <p class="card-title">3 opciones intercambiables</p>
+    <p class="section-label">Opción A — si tienes alberca</p>
+    <div class="cardio-option" style="border-color:#5DCAA5;">
+      <p class="cardio-opt-title">Natación principiante · 40-45 min</p>
+      <p class="cardio-opt-detail">Sem 1-3: tabla de flotación + patada · Sem 4-6: crol básico 25m con descanso · Sem 7+: 300-400m continuos. Corrige hombros caídos con cada brazada.</p>
+    </div>
+    <div class="vs-divider">— o si no tienes alberca —</div>
+    <p class="section-label">Opción B — correr en el fraccionamiento</p>
+    <div class="cardio-option" style="border-color:#97C459;">
+      <p class="cardio-opt-title">Carrera/caminata progresiva · 30-40 min</p>
+      <p class="cardio-opt-detail">Sem 1-2: caminar rápido 30 min · Sem 3-4: 2 min trote / 2 min caminata · Sem 5-6: trotar 20 min continuos · Sem 7+: correr 30 min a ritmo cómodo.</p>
+    </div>
+    <div class="vs-divider">— o si no puedes salir —</div>
+    <p class="section-label">Opción C — HIIT en casa sin equipo</p>
+    <div class="cardio-option" style="border-color:#EF9F27;">
+      <p class="cardio-opt-title">Circuito 20 min · Burpees + saltos + mountain climbers</p>
+      <p class="cardio-opt-detail">8 rondas de 40 seg trabajo / 20 seg descanso. Calentamiento 3 min + enfriamiento postural 5 min. La opción más corta pero más intensa.</p>
+    </div>
+    <div class="tip-box"><span class="tip-label">Regla simple:</span> Cualquier semana que hagas 2 sesiones de cardio (de cualquier opción), estás cumpliendo el plan.</div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Protocolo HIIT en detalle — cuando corres</p>
+    <div class="step-row"><div class="step-dot">1</div><p class="step-text">Calentamiento 5 min: caminata rápida o trote muy suave.</p></div>
+    <div class="step-row"><div class="step-dot">2</div><p class="step-text">Sprint 30 seg a intensidad 8-9/10 + recuperación 90 seg caminando. Repite 6-8 veces (sem 1-2) o 10 veces (sem 5+).</p></div>
+    <div class="step-row"><div class="step-dot">3</div><p class="step-text">Enfriamiento 3-5 min: caminata lenta + estiramiento de pecho en pared.</p></div>
+    <div class="tip-box"><span class="tip-label">El HIIT eleva el metabolismo 24h después.</span> Solo 20 minutos bien hechos equivalen a 40 min de cardio continuo en términos de quema de grasa total.</div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Natación — progresión para principiante</p>
+    <div class="ex-row"><div class="ex-num ex-num-teal">1</div><div><p class="ex-name">Sem 1-2: flotación y patada</p><p class="ex-detail">Agarra el borde o usa tabla. Practica el pataleo. Sin presión de velocidad ni distancia.</p></div></div>
+    <div class="ex-row"><div class="ex-num ex-num-teal">2</div><div><p class="ex-name">Sem 3-4: crol con tabla</p><p class="ex-detail">Tabla en manos, practica la brazada y la respiración lateral. 25m + 60 seg descanso × 6-8 veces.</p></div></div>
+    <div class="ex-row"><div class="ex-num ex-num-teal">3</div><div><p class="ex-name">Sem 5-6: primeros 200m</p><p class="ex-detail">Crol sin tabla. No importa el tiempo. Descansa entre largos lo que necesites.</p></div></div>
+    <div class="ex-row"><div class="ex-num ex-num-teal">4</div><div><p class="ex-name">Sem 7+: 300-500m continuos</p><p class="ex-detail">Ritmo cómodo. Puedes alternar crol y braza. La braza trabaja muy bien el pectoral.</p></div></div>
+    <div class="tip-box"><span class="tip-label">Natación y postura:</span> El estilo crol abre el pecho y retrae los hombros de forma natural con cada brazada. Es el ejercicio más terapéutico para tu patrón postural.</div>
+  </div>
+</div>
+
+<!-- ===== NUTRICIÓN ===== -->
+<div id="nutricion" class="page">
+  <p class="page-title">Plan nutricional</p>
+  <p class="page-sub">2,100 kcal · P 158g · C 210g · G 70g · Menú fijo lunes a viernes</p>
+
+  <div class="card">
+    <p class="card-title">Macros personalizados</p>
+    <div class="metric-grid">
+      <div class="metric" style="background:var(--blue50);"><p class="metric-label" style="color:var(--blue600);">Proteína · 30%</p><p class="metric-val" style="color:var(--blue800);">158g</p></div>
+      <div class="metric" style="background:var(--green50);"><p class="metric-label" style="color:var(--green600);">Carbohidratos · 40%</p><p class="metric-val" style="color:var(--green600);">210g</p></div>
+      <div class="metric" style="background:var(--teal50);"><p class="metric-label" style="color:var(--teal600);">Grasas · 30%</p><p class="metric-val" style="color:var(--teal600);">70g</p></div>
+    </div>
+    <div class="tip-box"><span class="tip-label">Café:</span> 1 taza diaria con 1 shot Coffee Mate = ~30 kcal. Ya incluido en el conteo. Sin cambios necesarios.</div>
+  </div>
+
+  <div class="card">
+    <span class="badge badge-blue">Desayuno fijo — todos los días L-V · 7:00am</span>
+    <div class="meal-block">
+      <div class="meal-header"><span class="meal-time-label">7:00 am</span><span class="meal-kcal">~380 kcal</span></div>
+      <p class="meal-name">Huevos a la mexicana + tortillas + café</p>
+      <p class="meal-detail">3 huevos revueltos con jitomate, cebolla y chile serrano al gusto · 2 tortillas de maíz · 1 taza café con 1 shot Coffee Mate</p>
+      <div class="macro-row"><span class="mp mp-p">P 24g</span><span class="mp mp-c">C 30g</span><span class="mp mp-g">G 14g</span></div>
+    </div>
+    <div class="tip-box"><span class="tip-label">Variación 2 días/sem:</span> Sustituye los huevos a la mexicana por 3 huevos con 60g queso panela en cubitos.</div>
+  </div>
+
+  <div class="card">
+    <span class="badge badge-blue">Colación media mañana — todos los días L-V · 10:00am</span>
+    <div class="meal-block">
+      <div class="meal-header"><span class="meal-time-label">10:00 am</span><span class="meal-kcal">~220 kcal</span></div>
+      <p class="meal-name">Licuado proteico con leche deslactosada</p>
+      <p class="meal-detail">1 scoop whey sin lactosa + 250ml leche deslactosada + 1 plátano o manzana + hielo</p>
+      <div class="macro-row"><span class="mp mp-p">P 34g</span><span class="mp mp-c">C 28g</span><span class="mp mp-g">G 4g</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="badge badge-blue">Comida principal — días de gym (L, M, V) · 1:00pm</span>
+    <div class="meal-block">
+      <div class="meal-header"><span class="meal-time-label">1:00 pm</span><span class="meal-kcal">~520 kcal</span></div>
+      <p class="meal-name">Pechuga a la plancha con arroz y verdura</p>
+      <p class="meal-detail">180g pechuga de pollo · ¾ taza arroz integral · 1 taza calabaza o chayote con ajo · ½ aguacate · salsa verde</p>
+      <div class="macro-row"><span class="mp mp-p">P 50g</span><span class="mp mp-c">C 52g</span><span class="mp mp-g">G 12g</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="badge badge-teal">Comida principal — días de cardio/descanso (Mar, Jue) · 1:00pm</span>
+    <div class="meal-block">
+      <div class="meal-header"><span class="meal-time-label">1:00 pm</span><span class="meal-kcal">~460 kcal</span></div>
+      <p class="meal-name">Bistec de res con nopales y frijoles</p>
+      <p class="meal-detail">160g bistec magro a la plancha · 1 taza nopales · ½ taza frijoles negros · 2 tortillas de maíz · salsa roja</p>
+      <div class="macro-row"><span class="mp mp-p">P 44g</span><span class="mp mp-c">C 44g</span><span class="mp mp-g">G 11g</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="badge badge-blue">Colación tarde — todos los días L-V · 4:30pm</span>
+    <div class="meal-block">
+      <div class="meal-header"><span class="meal-time-label">4:30 pm</span><span class="meal-kcal">~230 kcal</span></div>
+      <p class="meal-name">Queso panela con fruta</p>
+      <p class="meal-detail">80g queso panela en rebanadas · 1 fruta (manzana, pera o naranja) · opcional: 1 tostada horneada con aguacate</p>
+      <div class="macro-row"><span class="mp mp-p">P 18g</span><span class="mp mp-c">C 22g</span><span class="mp mp-g">G 8g</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="badge badge-blue">Cena fija — todos los días L-V · 8:00pm</span>
+    <div class="meal-block">
+      <div class="meal-header"><span class="meal-time-label">8:00 pm</span><span class="meal-kcal">~310 kcal</span></div>
+      <p class="meal-name">Sopa de verduras con pollo y queso panela</p>
+      <p class="meal-detail">150g pechuga o muslo desmenuzado · 1 taza verduras (calabaza, chayote, zanahoria) · caldo de pollo bajo en sodio · 50g queso panela en cubitos · 1 tortilla</p>
+      <div class="macro-row"><span class="mp mp-p">P 38g</span><span class="mp mp-c">C 18g</span><span class="mp mp-g">G 9g</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Fin de semana — estrategia flexible</p>
+    <div class="step-row"><div class="step-dot">1</div><p class="step-text">Desayuno y cena igual que entre semana. Solo la comida cambia si comes fuera.</p></div>
+    <div class="step-row"><div class="step-dot">2</div><p class="step-text">Comida fuera: elige proteína + verdura. Evita frituras y refrescos. 1-2 cervezas no arruinan nada; más sí.</p></div>
+    <div class="step-row"><div class="step-dot">3</div><p class="step-text">Si comiste abundante afuera, cena solo panela con fruta o licuado. No es castigo, es balance.</p></div>
+    <div class="step-row"><div class="step-dot">4</div><p class="step-text">Si un fin de semana fallas dos veces, retoma el lunes sin compensar. La consistencia de 5 días pesa más.</p></div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Suplementos</p>
+    <div class="ex-row"><div class="ex-num" style="background:var(--blue50); color:var(--blue800);">W</div><div><p class="ex-name">Whey isolate sin lactosa · 25-30g</p><p class="ex-detail">Post-entreno o en licuado matutino. Optimum Isolate o Dymatize ISO100.</p></div></div>
+    <div class="ex-row"><div class="ex-num" style="background:var(--green50); color:var(--green600);">Zn</div><div><p class="ex-name">Zinc · 25mg con la comida principal</p><p class="ex-detail">Apoya producción de testosterona natural y sistema inmune.</p></div></div>
+    <div class="ex-row"><div class="ex-num" style="background:var(--teal50); color:var(--teal600);">D3</div><div><p class="ex-name">Vitamina D3 · 2,000 UI con el desayuno</p><p class="ex-detail">Importante con leche deslactosada. Relacionada con niveles de testosterona.</p></div></div>
+    <div class="ex-row"><div class="ex-num" style="background:var(--amber50); color:var(--amber600);">Ω3</div><div><p class="ex-name">Omega-3 · 2g con la comida</p><p class="ex-detail">Reduce inflamación, favorece pérdida de grasa. Sin lactosa.</p></div></div>
+    <div class="ex-row"><div class="ex-num" style="background:var(--purple50); color:var(--purple800);">Mg</div><div><p class="ex-name">Magnesio · 200mg antes de dormir</p><p class="ex-detail">Mejora el sueño y la recuperación muscular. Calcio cubierto con panela y leche deslactosada.</p></div></div>
+  </div>
+</div>
+
+<!-- ===== POSTURA ===== -->
+<div id="postura" class="page">
+  <p class="page-title">Corrección postural</p>
+  <p class="page-sub">10 minutos diarios · Hombros caídos + cifosis leve</p>
+
+  <div class="card">
+    <p class="card-title">Tu patrón postural</p>
+    <span class="badge badge-amber">Cifosis leve + hombros en protracción</span>
+    <p class="body-text" style="margin-top:8px;">Los hombros caídos hacia adelante y la tendencia a encorvarte forman un patrón muy común. Tiene dos efectos directos: hace que el pecho se vea más prominente aunque no haya grasa extra, y crea un desequilibrio donde el pectoral está acortado y la espalda débil.</p>
+    <div class="tip-box"><span class="tip-label">Buena noticia:</span> Corregir la postura puede mejorar la apariencia del pecho un 20-30% sin perder ni un gramo de grasa. Es el cambio más rápido y visible.</div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Ejercicios correctivos diarios — 10 minutos</p>
+    <div class="ex-row"><div class="ex-num ex-num-teal">1</div><div><p class="ex-name">Apertura de pecho en marco de puerta</p><p class="ex-detail">Apoya ambos antebrazos en el marco. Inclina el cuerpo hacia adelante. 3 × 30 seg. Estira el pectoral acortado.</p></div></div>
+    <div class="ex-row"><div class="ex-num ex-num-teal">2</div><div><p class="ex-name">Retracción de omóplatos</p><p class="ex-detail">De pie, lleva hombros hacia atrás y abajo. Mantén 5 seg. Suelta. 3 × 15 reps. Reactiva los romboides débiles.</p></div></div>
+    <div class="ex-row"><div class="ex-num ex-num-teal">3</div><div><p class="ex-name">Ángel en pared (Wall angel)</p><p class="ex-detail">Espalda, cabeza y talones pegados a la pared. Sube brazos en ángulo 90° y vuelve a bajar. 3 × 10 reps lentas. Muy efectivo para hombros caídos.</p></div></div>
+    <div class="ex-row"><div class="ex-num ex-num-teal">4</div><div><p class="ex-name">Cobra yoga</p><p class="ex-detail">Boca abajo, manos bajo los hombros. Empuja el pecho hacia arriba. Mantén 20 seg. 3 repeticiones. Abre el pecho y fortalece la espalda baja.</p></div></div>
+    <div class="ex-row"><div class="ex-num ex-num-teal">5</div><div><p class="ex-name">Hábito consciente</p><p class="ex-detail">Cada vez que te sientes: hombros atrás y abajo, pecho hacia afuera, mentón paralelo al suelo. Alarma cada 2h durante el día.</p></div></div>
+    <div class="tip-box"><span class="tip-label">En el gym:</span> El face pull (2 veces/semana), el remo y las extensiones de espalda son los ejercicios más importantes para tu postura. No los omitas.</div>
+  </div>
+</div>
+
+<!-- ===== 12 SEMANAS ===== -->
+<div id="semanas" class="page">
+  <p class="page-title">Plan de 12 semanas</p>
+  <p class="page-sub">Fases · Seguimiento · Señales de avance</p>
+
+  <div class="card">
+    <p class="card-title">Fase 1 — Adaptación · Semanas 1–4</p>
+    <div class="phase-block" style="background:var(--blue50); border-color:#85B7EB;">
+      <p class="body-text" style="color:var(--blue600);">Gym: aprende técnica correcta, pesos moderados. No te obsesiones con el peso del bar. Cardio: semanas 1-2 solo adaptación al ritmo. Natación: solo flotación y patada. Postura: los 10 min diarios son la prioridad. Meta: –1 a –2 kg totales.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Fase 2 — Progresión · Semanas 5–8</p>
+    <div class="phase-block" style="background:var(--green50); border-color:#97C459;">
+      <p class="body-text" style="color:var(--green600);">Gym: aumenta 2.5-5 kg donde ya dominas la técnica. Correr: 20 min continuos. Natación: 300m. Postura: deberías notar hombros más atrás naturalmente. Meta: –3 a –4 kg totales.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Fase 3 — Consolidación · Semanas 9–12</p>
+    <div class="phase-block" style="background:var(--teal50); border-color:#5DCAA5;">
+      <p class="body-text" style="color:var(--teal600);">Gym: máxima intensidad, baja descanso a 45 seg. Correr: 30 min. Natación: 400-500m. El pecho ya se ve notablemente diferente. Evalúa si continuar otras 12 semanas. Meta: –5 a –7 kg totales.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Medición semanal — cada domingo en ayunas</p>
+    <div class="step-row"><div class="step-dot">1</div><p class="step-text">Peso (kg) — cada domingo, misma hora, misma ropa o sin ropa.</p></div>
+    <div class="step-row"><div class="step-dot">2</div><p class="step-text">Cintura (cm) — semanas 1, 4, 8 y 12. Arriba del ombligo.</p></div>
+    <div class="step-row"><div class="step-dot">3</div><p class="step-text">Pecho (cm) — semanas 1, 4, 8 y 12. Parte más prominente.</p></div>
+    <div class="step-row"><div class="step-dot">4</div><p class="step-text">Foto de frente y perfil — semanas 1, 4, 8 y 12. Misma hora y lugar.</p></div>
+    <div class="tip-box"><span class="tip-label">Interpretación:</span> Bajaste 0.3-0.7 kg/sem = perfecto. Sin cambio 2 semanas = reduce 100 kcal o agrega 15 min caminata. Más de 1 kg en una semana = revisa que estés comiendo las 2,100 kcal.</div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Señales de que vas bien</p>
+    <span class="badge badge-green">Aparecen entre semana 3 y 6</span>
+    <div class="alarm-row"><div class="alarm-dot" style="background:#639922;"></div><div><p class="alarm-text">La ropa del pecho te queda más holgada</p><p class="alarm-detail">Primera señal visible, antes de que la báscula baje mucho.</p></div></div>
+    <div class="alarm-row"><div class="alarm-dot" style="background:#639922;"></div><div><p class="alarm-text">Los hombros se van naturalmente hacia atrás</p><p class="alarm-detail">La corrección postural está funcionando.</p></div></div>
+    <div class="alarm-row"><div class="alarm-dot" style="background:#639922;"></div><div><p class="alarm-text">El cardio que antes cansaba ahora es más fácil</p><p class="alarm-detail">Tu capacidad aeróbica mejoró. Adaptación positiva.</p></div></div>
+    <div class="alarm-row"><div class="alarm-dot" style="background:#639922;"></div><div><p class="alarm-text">El pantalón en la cintura tiene más espacio</p><p class="alarm-detail">La cintura responde antes que el pecho. Buen indicador.</p></div></div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Señales de ajustar o consultar</p>
+    <div class="alarm-row"><div class="alarm-dot" style="background:var(--amber600);"></div><div><p class="alarm-text">Fatiga excesiva persistente</p><p class="alarm-detail">Sube 100-150 kcal temporalmente o revisa horas de sueño.</p></div></div>
+    <div class="alarm-row"><div class="alarm-dot" style="background:var(--amber600);"></div><div><p class="alarm-text">Estancamiento más de 3 semanas</p><p class="alarm-detail">Reduce 100 kcal o agrega 15 min de caminata diaria.</p></div></div>
+    <div class="alarm-row"><div class="alarm-dot" style="background:#E24B4A;"></div><div><p class="alarm-text">Aparece masa dura bajo el pezón o dolor</p><p class="alarm-detail">Consulta médico. Podría cambiar el diagnóstico.</p></div></div>
+    <div class="alarm-row"><div class="alarm-dot" style="background:#E24B4A;"></div><div><p class="alarm-text">Sin cambios en cintura tras 8 semanas</p><p class="alarm-detail">Puede haber factor hormonal. Solicita análisis de testosterona y cortisol.</p></div></div>
+  </div>
+</div>
+
+<!-- ===== COMPRAS ===== -->
+<div id="compras" class="page">
+  <p class="page-title">Lista del súper semanal</p>
+  <p class="page-sub">Para 1 persona · Colima · ~$700–$950 MXN/semana</p>
+
+  <div class="card">
+    <div class="compra-section">
+      <p class="compra-title">Proteínas</p>
+      <div class="compra-item"><span>Pechuga de pollo</span><span class="ci-qty">1 kg</span></div>
+      <div class="compra-item"><span>Muslo de pollo sin piel</span><span class="ci-qty">500g</span></div>
+      <div class="compra-item"><span>Bistec de res magro</span><span class="ci-qty">600g</span></div>
+      <div class="compra-item"><span>Huevos</span><span class="ci-qty">18 piezas</span></div>
+      <div class="compra-item"><span>Atún en agua (latas)</span><span class="ci-qty">4 latas</span></div>
+      <div class="compra-item"><span>Queso panela</span><span class="ci-qty">500g</span></div>
+      <div class="compra-item"><span>Leche deslactosada</span><span class="ci-qty">2 litros</span></div>
+      <div class="compra-item"><span>Whey isolate sin lactosa</span><span class="ci-qty">5 scoops aprox.</span></div>
+    </div>
+    <div class="compra-section">
+      <p class="compra-title">Carbohidratos y cereales</p>
+      <div class="compra-item"><span>Tortillas de maíz</span><span class="ci-qty">1 kg</span></div>
+      <div class="compra-item"><span>Arroz (blanco o integral)</span><span class="ci-qty">500g</span></div>
+      <div class="compra-item"><span>Avena en hojuelas</span><span class="ci-qty">500g</span></div>
+      <div class="compra-item"><span>Frijoles negros (secos o lata)</span><span class="ci-qty">500g o 2 latas</span></div>
+      <div class="compra-item"><span>Camote</span><span class="ci-qty">3 piezas medianas</span></div>
+      <div class="compra-item"><span>Plátanos</span><span class="ci-qty">6 piezas</span></div>
+      <div class="compra-item"><span>Manzanas</span><span class="ci-qty">4 piezas</span></div>
+    </div>
+    <div class="compra-section">
+      <p class="compra-title">Verduras</p>
+      <div class="compra-item"><span>Calabaza italiana</span><span class="ci-qty">1 kg</span></div>
+      <div class="compra-item"><span>Chayote</span><span class="ci-qty">4 piezas</span></div>
+      <div class="compra-item"><span>Nopales (frescos o en tiras)</span><span class="ci-qty">500g</span></div>
+      <div class="compra-item"><span>Jitomate</span><span class="ci-qty">1 kg</span></div>
+      <div class="compra-item"><span>Cebolla</span><span class="ci-qty">3 piezas</span></div>
+      <div class="compra-item"><span>Ajo</span><span class="ci-qty">1 cabeza</span></div>
+      <div class="compra-item"><span>Espinaca o lechuga</span><span class="ci-qty">1 bolsa</span></div>
+      <div class="compra-item"><span>Chile serrano</span><span class="ci-qty">100g</span></div>
+    </div>
+    <div class="compra-section">
+      <p class="compra-title">Grasas saludables y condimentos</p>
+      <div class="compra-item"><span>Aguacate</span><span class="ci-qty">4 piezas</span></div>
+      <div class="compra-item"><span>Aceite de oliva</span><span class="ci-qty">1 botella pequeña</span></div>
+      <div class="compra-item"><span>Almendras o nueces</span><span class="ci-qty">200g</span></div>
+      <div class="compra-item"><span>Mantequilla de cacahuate natural</span><span class="ci-qty">1 frasco</span></div>
+      <div class="compra-item"><span>Limones</span><span class="ci-qty">1 bolsa</span></div>
+    </div>
+    <div class="compra-section">
+      <p class="compra-title">Despensa básica</p>
+      <div class="compra-item"><span>Caldo de pollo bajo en sodio</span><span class="ci-qty">1 caja</span></div>
+      <div class="compra-item"><span>Salsa verde</span><span class="ci-qty">1 frasco</span></div>
+      <div class="compra-item"><span>Coffee Mate</span><span class="ci-qty">1 bote (dura varias semanas)</span></div>
+      <div class="compra-item"><span>Canela en polvo</span><span class="ci-qty">1 frasco</span></div>
+    </div>
+    <div class="tip-box"><span class="tip-label">Ahorro:</span> Compra carne y pollo en carnicería local — 20-30% más barato que en supermercado. Las proteínas representan el 50% del costo semanal.</div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Prep dominical — 45 min, semana resuelta</p>
+    <div class="step-row"><div class="step-dot">1</div><p class="step-text"><strong>Cocer pollo (15 min):</strong> 1.5kg pechuga en olla con agua, sal, ajo y cebolla. 20 min a fuego medio. Desmenuzar y guardar en 5 porciones. Dura toda la semana.</p></div>
+    <div class="step-row"><div class="step-dot">2</div><p class="step-text"><strong>Arroz (5 min activos):</strong> 2 tazas. Dividir en 5 porciones de ¾ taza. Dura 5 días en refri.</p></div>
+    <div class="step-row"><div class="step-dot">3</div><p class="step-text"><strong>Frijoles:</strong> Si son secos, remoja desde el sábado y cuece el domingo. Si son lata, ábrela cuando se necesite.</p></div>
+    <div class="step-row"><div class="step-dot">4</div><p class="step-text"><strong>Verduras (10 min):</strong> Calabaza y chayote en cubos. Jitomate y cebolla picados. Guardar en tuppers.</p></div>
+    <div class="step-row"><div class="step-dot">5</div><p class="step-text"><strong>Nopales (5 min):</strong> Cortar en tiras, cocer con sal y cáscara de tomate. Guardan 4-5 días en refri.</p></div>
+    <div class="tip-box"><span class="tip-label">Resultado:</span> Con todo listo, armar cada comida toma menos de 5 minutos. La cena de sopa es: caldo + pollo + verdura cortada + panela encima. Calentar y listo.</div>
+  </div>
+</div>
+
+<!-- ===== CHECKLIST ===== -->
+<div id="checklist" class="page">
+  <p class="page-title">Checklist diario</p>
+  <p class="page-sub">Marca lo que cumples · Meta: 80% o más cada semana</p>
+
+  <div class="card">
+    <p class="section-label">Nutrición</p>
+    <div class="check-row"><div class="check-box" onclick="toggle(this)"></div><div><p class="check-label">Desayuno completo (huevos + tortillas + café)</p><p class="check-detail">Sin saltárselo aunque sea tarde</p></div></div>
+    <div class="check-row"><div class="check-box" onclick="toggle(this)"></div><div><p class="check-label">Licuado proteico a media mañana</p><p class="check-detail">Con leche deslactosada o agua</p></div></div>
+    <div class="check-row"><div class="check-box" onclick="toggle(this)"></div><div><p class="check-label">Comida con proteína + carbo + verdura</p><p class="check-detail">Pollo o res, arroz, calabaza o nopales</p></div></div>
+    <div class="check-row"><div class="check-box" onclick="toggle(this)"></div><div><p class="check-label">Colación de la tarde (panela + fruta)</p><p class="check-detail">No saltarse para no llegar con hambre a la cena</p></div></div>
+    <div class="check-row"><div class="check-box" onclick="toggle(this)"></div><div><p class="check-label">Cena ligera antes de las 9pm</p><p class="check-detail">Sopa de pollo con verdura y panela</p></div></div>
+    <div class="check-row"><div class="check-box" onclick="toggle(this)"></div><div><p class="check-label">3 litros de agua</p><p class="check-detail">Botella de 1L, llenarla 3 veces al día</p></div></div>
+
+    <p class="section-label" style="margin-top:14px;">Entrenamiento</p>
+    <div class="check-row"><div class="check-box" onclick="toggle(this)"></div><div><p class="check-label">Gym o cardio completado según el día</p><p class="check-detail">L-M-V gym · Mar-Sáb cardio flexible</p></div></div>
+    <div class="check-row"><div class="check-box" onclick="toggle(this)"></div><div><p class="check-label">10 min de ejercicios posturales</p><p class="check-detail">Todos los días, incluyendo días de descanso</p></div></div>
+    <div class="check-row"><div class="check-box" onclick="toggle(this)"></div><div><p class="check-label">Suplementos tomados (zinc, D3, omega-3)</p><p class="check-detail">Con las comidas correspondientes</p></div></div>
+
+    <p class="section-label" style="margin-top:14px;">Recuperación</p>
+    <div class="check-row"><div class="check-box" onclick="toggle(this)"></div><div><p class="check-label">7–8 horas de sueño</p><p class="check-detail">El 60% de la pérdida de grasa ocurre durmiendo</p></div></div>
+    <div class="check-row"><div class="check-box" onclick="toggle(this)"></div><div><p class="check-label">Sin alcohol esta semana (o máximo 1 ocasión)</p><p class="check-detail">1-2 bebidas en fin de semana no arruinan el plan</p></div></div>
+
+    <div class="tip-box" style="margin-top:12px;"><span class="tip-label">Regla del 80%:</span> Si cumples 9 de estos 11 puntos cada día, estás en el rango que garantiza resultados. No necesitas perfección, necesitas consistencia.</div>
+  </div>
+
+  <div class="card" style="background:var(--bg2); border:none;">
+    <p class="card-title">Recordatorio final</p>
+    <p class="body-text">Este plan fue diseñado específicamente para ti: 30 años, 76.8 kg, 171 cm, Colima. Pseudoginecomastia leve con pronóstico muy bueno. Con constancia de lunes a viernes y fines de semana flexibles, los resultados en 12 semanas serán visibles y medibles.</p>
+    <p class="body-text" style="margin-top:6px;">Si tienes dudas, ajustes o notas señales de alerta durante el proceso, consulta con un médico o especialista presencial.</p>
+  </div>
+</div>
+
+<script>
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function toggle(el) {
+  el.classList.toggle('checked');
+  el.textContent = el.classList.contains('checked') ? '✓' : '';
+}
+</script>
+</body>
+</html>
